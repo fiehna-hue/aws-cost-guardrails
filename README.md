@@ -35,3 +35,15 @@ Repositories created recently send a `sub` claim that includes numeric IDs, not 
     gh api repos/OWNER/REPO/actions/oidc/customization/sub
 
 and use `sub_claim_prefix` plus `:ref:refs/heads/main` in the role's trust policy.
+
+## Status
+
+![ci](https://github.com/fiehna-hue/aws-cost-guardrails/actions/workflows/ci.yml/badge.svg)
+![scan](https://github.com/fiehna-hue/aws-cost-guardrails/actions/workflows/scan.yml/badge.svg)
+
+## What I learned building this
+
+- A scanner must say what it could not check. My first run reported "nothing found" while silently unable to list EKS clusters (the most expensive resource), so it now prints every skipped check.
+- Tests that fake AWS (moto) let CI prove the scanner catches an unattached volume and a loose Elastic IP, without touching a real account.
+- The Terraform budget module is validated and format-checked in CI but not applied by CI, because creating budgets needs permissions I deliberately do not give the pipeline.
+- GitHub OIDC for newer repositories uses immutable subject claims; the trust policy must use the repo's `sub_claim_prefix`. Debugging that is documented above.
