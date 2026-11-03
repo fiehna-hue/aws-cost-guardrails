@@ -19,5 +19,19 @@ If your credentials lack permission for a check, the scanner prints `skipped` in
 
 - [x] M1 Scanner
 - [x] M2 Terraform module: budget with email alerts at 50%, 80%, 100%
-- [ ] M3 Scheduled GitHub Actions run that fails when something is found
+- [x] M3 Scheduled GitHub Actions run that fails when something is found
 - [ ] M4 Tests and demo write-up
+
+## Scheduled scan (M3)
+
+`.github/workflows/scan.yml` runs `scan.py --all-regions` every day and on demand. It assumes a read-only AWS role through GitHub OIDC, so no AWS keys are stored in GitHub. The job fails (and GitHub emails the owner) if anything billable is found.
+
+The role can only list and describe EC2, load balancers, RDS and EKS. Its trust policy allows only this repository's `main` branch.
+
+### Gotcha: immutable OIDC subject claims
+
+Repositories created recently send a `sub` claim that includes numeric IDs, not the plain `repo:owner/name` form. A trust policy written with the plain form fails with "Not authorized to perform sts:AssumeRoleWithWebIdentity". Find your repo's real prefix with:
+
+    gh api repos/OWNER/REPO/actions/oidc/customization/sub
+
+and use `sub_claim_prefix` plus `:ref:refs/heads/main` in the role's trust policy.
