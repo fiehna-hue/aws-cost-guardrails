@@ -18,6 +18,6 @@ If your credentials lack permission for a check, the scanner prints `skipped` in
 ## Roadmap
 
 - [x] M1 Scanner
-- [ ] M2 Terraform module: budget with email alerts at 50%, 80%, 100%
+- [x] M2 Terraform module: budget with email alerts at 50%, 80%, 100%
 - [ ] M3 Scheduled GitHub Actions run that fails when something is found
 - [ ] M4 Tests and demo write-up
